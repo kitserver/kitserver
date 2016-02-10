@@ -67,6 +67,8 @@ KSERV_CONFIG g_config = {
 	DEFAULT_VKEY_GKAWAYKIT,
 	DEFAULT_VKEY_BALL,
 	DEFAULT_VKEY_RANDOM_BALL,
+    DEFAULT_ASPECT_RATIO,
+    DEFAULT_GAME_SPEED,
 };
 #pragma data_seg()
 #pragma comment(linker, "/section:.HKT,rws")
@@ -770,7 +772,7 @@ void DrawKitLabels(IDirect3DDevice8* dev)
 
 /* New Reset function */
 EXTERN_C HRESULT _declspec(dllexport) STDMETHODCALLTYPE JuceReset(
-IDirect3DDevice8* self, LPVOID params)
+IDirect3DDevice8* self, D3DPRESENT_PARAMETERS* params)
 {
 	TRACE("JuceReset: called.");
 	Log("JuceReset: cleaning-up.");
@@ -1192,6 +1194,140 @@ EXTERN_C _declspec(dllexport) void RestoreDeviceMethods()
 	Log("RestoreDeviceMethods: done.");
 }
 
+unsigned char code1[8] =
+    "\x81\xec\xcc\x02\x00\x00"
+    "\x56";
+
+unsigned char patch1[8] =
+    "\xbe\x00\x00\x00\x00"
+    "\x90"
+    "\x90";
+
+unsigned char patch2[8] =
+    "\xbf\x00\x00\x00\x00"
+    "\x90"
+    "\x90";
+
+BYTE ar[25] =
+    "\xab\xaa\xaa\x3f\x00\x00\x00\x00"
+    "\x00\x00\x00\x00\x00\x00\x00\x44"
+    "\x00\x00\xc0\x43";
+
+BYTE near_qpf[8] = 
+    "\x33\xc0\xc3\x6a\x01\xc6\x05";
+
+bool argsPatched(false);
+
+BYTE* find_code_frag(BYTE *base, DWORD max_offset, BYTE *frag, size_t frag_len)
+{
+    BYTE *p = base;
+    BYTE *max_p = base + max_offset;
+    while (p < max_p && memcmp(p, frag, frag_len)!=0) {
+        p += 1;
+    }
+    if (p < max_p) {
+        return p;
+    }
+    return NULL;
+}
+
+bool patchResolution(BYTE *code_sec, size_t max_length)
+{
+    BYTE *c;
+    DWORD oldProtection;
+    DWORD newProtection = PAGE_EXECUTE_READWRITE;
+
+    if (!g_config.screenWidth || !g_config.screenHeight) {
+        return false;
+    }
+
+    /* search for code pattern 1 */
+    c = find_code_frag(code_sec, max_length, code1, sizeof(code1)-1);
+    if (!c) {
+        return false;
+    }
+
+    if (VirtualProtect(c, 64, newProtection, &oldProtection)) {
+        memcpy(c+7, patch1, sizeof(patch1)-1);
+        memcpy(c+15, patch2, sizeof(patch2)-1);
+        *(c+0x22) = '\xeb';
+
+        DWORD *width = (DWORD*)(c+8);
+        DWORD *height = (DWORD*)(c+16);
+
+        *width = g_config.screenWidth;
+        *height = g_config.screenHeight;
+
+        VirtualProtect(c, 64, oldProtection, &newProtection);
+    }
+
+    return true;
+}
+
+void patchAspectRatioAndGameSpeed() 
+{
+    BYTE *place;
+    BYTE *c;
+    DWORD oldProtection;
+    DWORD newProtection = PAGE_EXECUTE_READWRITE;
+
+    if (g_config.aspectRatio >= 0.5f) {
+        BYTE *data = (BYTE*)GetModuleHandle(NULL);
+        IMAGE_SECTION_HEADER *h_data;
+        h_data = GetSectionHeader(".data");
+        data += h_data->VirtualAddress;
+
+        place = find_code_frag(data, h_data->Misc.VirtualSize, ar, sizeof(ar)-1);
+        if (!place) {
+            Log("Unable to patch: (aspect ratio) data pattern not found"); 
+        }
+        else {
+            c = place;
+            LogWithNumber("Data pattern found at offset: %08x", (c-data));  
+            if (VirtualProtect(c-32, 48, newProtection, &oldProtection)) {
+                float *fv = (float *)(c+12);
+                *fv = 384.0f * g_config.aspectRatio;
+                DWORD *cullw = (DWORD*)(c-24);
+                DWORD *cullh = (DWORD*)(c-20);
+                *cullw = (DWORD)((*cullh) * g_config.aspectRatio) + 1;
+                VirtualProtect(c-32, 48, oldProtection, &newProtection);
+                LogWithDouble("Aspect ratio adjusted to: %0.3f", 
+                    g_config.aspectRatio);
+            }
+            else {
+                Log("PROBLEM with Virtual Protect.");
+            }
+        }
+    }
+
+    if (g_config.gameSpeed >= 0.1f) {
+        BYTE* base = (BYTE*)GetModuleHandle(NULL);
+        IMAGE_SECTION_HEADER* h;
+        h = GetSectionHeader(".text");
+        base += h->VirtualAddress;
+
+        place = find_code_frag(base, h->Misc.VirtualSize, near_qpf, sizeof(near_qpf)-1);
+        if (!place) {
+            Log("Unable to patch: (QPF) code pattern not matched"); 
+        }
+        else {
+            c = place-33;
+            if (*c != '\x68') {
+                Log("Unable to patch: (QPF) code pattern ambigious"); 
+            }
+            else {
+                LogWithNumber("Code pattern found at offset: %08x", (c-base));  
+                DWORD addr = *(DWORD*)(c+1);
+                LONGLONG *val = (LONGLONG*)addr;
+                *val = *val / g_config.gameSpeed;
+                LogWithDouble("Game speed set to: %0.3f", 
+                    g_config.gameSpeed);
+            }
+        }
+    }
+}
+
+
 /*******************/
 /* DLL Entry Point */
 /*******************/
@@ -1277,6 +1413,12 @@ EXTERN_C BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReser
 			if (v != -1)
 			{
 				Initialize(v);
+
+                BYTE *codeAddr = (BYTE*)GetModuleHandle(NULL);
+                codeAddr += sechdr->VirtualAddress;
+                if (patchResolution(codeAddr, sechdr->Misc.VirtualSize)) {
+                    Log("resolution patched.");
+                }
 
 				// hook code[C_LOADUNI];
 				if (memcmp((BYTE*)code[C_LOADUNI], sigLoadUni, 13)==0)
@@ -1966,6 +2108,11 @@ EXTERN_C LIBSPEC void GetKdbDir(char* kdbDir)
 
 LPVOID JuceLoadUni(DWORD buf, DWORD somedata)
 {
+    if (!argsPatched) {
+        patchAspectRatioAndGameSpeed();
+        argsPatched = true;
+    }
+
 	// maintain the count of calls to this function
 	// so that we know when goalkeeper uniform needs to be swapped
 	g_loadUniCount++;
@@ -2298,6 +2445,7 @@ DWORD JuceBinUnpack(DWORD addr, DWORD sSizeLo, DWORD sSizeHi, DWORD dSizeLo, DWO
 	// call the hooked function
 	DWORD result = BinUnpack(a, sLo, sHi, dLo, dHi);
 
+/*
 if (dLo == 0x1f1d0)
 {
 	// save etc_ee_tex
@@ -2327,6 +2475,7 @@ if (dLo == 0x28480) // only uniform files have unpacked buffer size of 0x28480
 	DumpData((DWORD*)result, dLo);
 	DumpUniforms((BYTE*)result);
 }
+*/
 
 	return result;
 }
@@ -2584,7 +2733,7 @@ DWORD JuceCheckTeam(DWORD num)
 	}
 
 	// load EPL number shapes for Newcastle or Man Utd
-	if (teamNumber == 77 || teamNumber == 76)
+	if (0) //teamNumber == 77 || teamNumber == 76)
 	{
 		// save original numbers (if hasn't done so yet)
 		if (!numData->valid)

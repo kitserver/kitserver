@@ -104,6 +104,38 @@ BOOL ReadConfig(KSERV_CONFIG* config, char* cfgFile)
 			LogWithNumber("ReadConfig: vKeyRandomBall = 0x%02x\n", value);
 			config->vKeyRandomBall = value;
 		}
+		else if (lstrcmp(name, "aspect.ratio")==0)
+		{
+            float fvalue;
+			if (sscanf(pValue, "%f", &fvalue)!=1) continue;
+            if (fvalue >= 0.5f && fvalue <= 5.0f) {
+                LogWithNumber("ReadConfig: aspectRatio = %03f\n", fvalue);
+                config->aspectRatio = fvalue;
+            }
+		}
+		else if (lstrcmp(name, "game.speed")==0)
+		{
+            float fvalue;
+			if (sscanf(pValue, "%f", &fvalue)!=1) continue;
+            if (fvalue >= 0.1f && fvalue <= 5.0f) {
+                LogWithNumber("ReadConfig: gameSpeed = %03f\n", fvalue);
+                config->gameSpeed = fvalue;
+            }
+		}
+		else if (lstrcmp(name, "screen.width")==0)
+		{
+            DWORD dvalue;
+			if (sscanf(pValue, "%u", &dvalue)!=1) continue;
+            LogWithNumber("ReadConfig: screenWidth = %u\n", dvalue);
+            config->screenWidth = dvalue;
+		}
+		else if (lstrcmp(name, "screen.height")==0)
+		{
+            DWORD dvalue;
+			if (sscanf(pValue, "%u", &dvalue)!=1) continue;
+            LogWithNumber("ReadConfig: screenHeight = %u\n", dvalue);
+            config->screenHeight = dvalue;
+		}
 	}
 	fclose(cfg);
 

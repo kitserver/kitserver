@@ -1,11 +1,11 @@
-KitServer 2.0.5 README FILE                                  August 22, 2004
+Kitserver 3.0.0 README FILE                                February 10, 2016
 ============================================================================
 
 
 INTRODUCTION
 ------------
 
-KitServer 2 is a "companion" program for Pro Evolution Soccer 3
+Kitserver 3 a "companion" program for Pro Evolution Soccer 3
 and Winning Eleven 7 International. It enhances the "Strip Selection" menu 
 of the game by allowing to select additional uniforms for Home and Away 
 teams (both player and goalkeeper kits), and adds ball selection as well.
@@ -15,9 +15,9 @@ This makes it easy to use "3rd" or "alternative" or "European" or
 "Champions League" (or whatever you want to call them) kits for specific 
 matches, without having to edit the AFS-file and the executable.  Also, 
 sometimes, teams use different shorts or socks with standard colored
-shirts. This too is easily done with KitServer: all you have to do is 
+shirts. This too is easily done with Kitserver: all you have to do is 
 just add extra uniforms with new combinations. 
-Another usage for KitServer is the testing of new kits.
+Another usage for Kitserver is the testing of new kits.
 
 The uniforms are picked from a special database (KDB), which basically
 contains the uniXXX*.bin files, and the description of number colors/collars
@@ -39,7 +39,7 @@ uni077pb.bin          -  correct name for a uniform file for Newcastle
 
 !!!WARNING!!!:
 Bad uniform files (corrupt or truncated) WILL CRASH the game, when you try
-to select them with KitServer. ALWAYS try a new kit in an exhibition game
+to select them with Kitserver. ALWAYS try a new kit in an exhibition game
 first, before using it in your Master League campaign. (I did ran into a 
 few bad uniform files that i downloaded for testing, so the bad kits do
 exist unfortunately.)
@@ -53,7 +53,7 @@ and the texture file.
 SYSTEM REQUIREMENTS
 -------------------
 
-KitServer only works with PES3(PC) and WE7I(PC).
+Kitserver only works with PES3(PC) and WE7I(PC).
 Supported versions are: 
 
 - PES3 1.0 (original)
@@ -67,21 +67,21 @@ INSTALLATION
 
 STEP 1. Copy the entire "kitserver" folder into your game folder. 
 (NOTE: Don't rename "kitserver" folder to anything else, because that
-will prevent the game from loading KitServer)
+will prevent the game from loading Kitserver)
 
 STEP 2. Run setup.exe 
 If STEP 1 was done correctly, you should see your "pes3.exe" (or "we7.exe")
 in the dropdown list. You may see other executable files in that list, if
 you have other executable files in the game folder (not counting setting.exe)
-Select the executable, which you want to install the KitServer for. 
-If KitServer hasn't been already installed for this executable, the "Install"
+Select the executable, which you want to install the Kitserver for. 
+If Kitserver hasn't been already installed for this executable, the "Install"
 button should become enabled. Press "Install" button. The installation should
 happen pretty quickly - in the matter of seconds. Once, it is complete, the
 popup window will display "SUCCESS!" message, or report an error if one 
 occured.
 
 If you get an error message, verify that the game is not currently 
-running. KitServer cannot be installed, when the game is running.
+running. Kitserver cannot be installed, when the game is running.
 Another typical cause for error, is a read-only executable file. In
 Windows Explorer, right-click on the file, and select "Properties". Uncheck 
 Read-Only Attribute checkbox, click "OK". Go back to setup window, and try
@@ -113,14 +113,14 @@ Default keys:
 'R' - switch to a random ball
 
 You can re-assign these keys by using "kctrl.exe" program, which provides
-a friendly GUI for KitServer configuration. (In order to create this 
+a friendly GUI for Kitserver configuration. (In order to create this 
 configuration file (kserv.cfg), you must run kctrl.exe, and press "Save" 
 button.
 
 ADVANCED USAGE:
 kctrl.exe also allows to modify the path to your KDB folder. 
 Normally, you don't need to worry about it. The only situation when you
-may want to change it, is when you have 2 or more games that KitServer
+may want to change it, is when you have 2 or more games that Kitserver
 is compatible with (PES3, WE7I), and you want to share the KDB between
 them. You still need to do the normal installation procedure for each
 game, but after that is done, you can move KDB folder to some other 
@@ -132,8 +132,8 @@ UNINSTALL
 ---------
 
 STEP 1. Run setup.exe.
-Choose the executable file that you wish to uninstall KitServer from.
-If KitServer is currently installed for this executable, the "Remove"
+Choose the executable file that you wish to uninstall Kitserver from.
+If Kitserver is currently installed for this executable, the "Remove"
 button will be enabled. Press "Remove" button and you should see the
 "SUCCESS!" pop-up window, if uninstall went ok. 
 
@@ -142,7 +142,7 @@ make sure the executable file is not READ-ONLY, and try again.
 
 STEP 2. Close setup.exe
 Uninstallation is complete.
-(If you want to completely get rid of the KitServer, you can now 
+(If you want to completely get rid of the Kitserver, you can now 
 safely delete the "kitserver" folder).
 
 
@@ -150,7 +150,7 @@ SAMPLE KDB
 ----------
 
 I included only few uniform files in the KDB - just to demonstrate how
-the KitServer works. It's easy to add many more. (see instructions above 
+the Kitserver works. It's easy to add many more. (see instructions above 
 on how to do it). All you need to do is to find a good website with
 uniforms and start building the KDB database. 
 
@@ -172,7 +172,7 @@ attrib.cfg file to see how they are configured.
 CREDITS
 -------
 
-KitServer 2 was developed by Juce.
+Kitserver 3 developed by Juce.
 Beta-testing by biker_jim_uk.
 
 Dinamo Kiev kits were created by ntalex and sch.

@@ -1,4 +1,4 @@
-/* KitServer 2 Setup */
+/* Kitserver 3 Setup */
 /* Version 1.0 (with Win32 GUI) by Juce. */
 
 #include <windows.h>
@@ -42,13 +42,15 @@ void InstallKserv(void)
 	DWORD loadLib = (DWORD)GetProcAddress(krnl, "LoadLibraryA");
 	
 	DWORD ep, ib, dVA, rdVA;
-	DWORD loadLibAddr, kservAddr;
+	DWORD loadLibAddr, kservAddr, loadLibAddr1;
 	DWORD newEntryPoint;
 
 	FILE* f = fopen(fileName, "r+b");
 	if (f != NULL)
 	{
 		// Install
+        loadLibAddr1 = getImportThunkRVA(f, "kernel32.dll","LoadLibraryA");
+
 		if (SeekEntryPoint(f))
 		{
 			fread(&ep, sizeof(DWORD), 1, f);
@@ -86,6 +88,8 @@ void InstallKserv(void)
 				//printf("loadLibAddr = %08x\n", loadLibAddr);
 				kservAddr = loadLibAddr + sizeof(DWORD);
 				//printf("kservAddr = %08x\n", kservAddr);
+                
+                loadLibAddr = ib + loadLibAddr1;
 			}
 			else
 			{
@@ -97,10 +101,10 @@ void InstallKserv(void)
 				ZeroMemory(buf, BUFLEN);
 				sprintf(buf, "\
 ======== INFORMATION! =========\n\
-KitServer 2 is already installed for\n\
+Kitserver 3 is already installed for\n\
 %s.", fileName);
 
-				MessageBox(hWnd, buf, "KitServer 2 Setup Message", 0);
+				MessageBox(hWnd, buf, "Kitserver 3 Setup Message", 0);
 				return;
 			}
 		}
@@ -140,10 +144,10 @@ KitServer 2 is already installed for\n\
 				ZeroMemory(buf, BUFLEN);
 				sprintf(buf, "\
 ======== INFORMATION! =========\n\
-KitServer 2 is already installed for\n\
+Kitserver 3 is already installed for\n\
 %s.", fileName);
 
-				MessageBox(hWnd, buf, "KitServer 2 Setup Message", 0);
+				MessageBox(hWnd, buf, "Kitserver 3 Setup Message", 0);
 				return;
 			}
 		}
@@ -173,10 +177,10 @@ KitServer 2 is already installed for\n\
 		ZeroMemory(buf, BUFLEN);
 		sprintf(buf, "\
 ======== SUCCESS! =========\n\
-Setup has installed KitServer 2 for\n\
+Setup has installed Kitserver 3 for\n\
 %s.", fileName);
 
-		MessageBox(hWnd, buf, "KitServer 2 Setup Message", 0);
+		MessageBox(hWnd, buf, "Kitserver 3 Setup Message", 0);
 	}
 	else
 	{
@@ -190,14 +194,14 @@ Setup has installed KitServer 2 for\n\
 		ZeroMemory(buf, BUFLEN);
 		sprintf(buf, "\
 ======== ERROR! =========\n\
-Setup failed to install KitServer 2 for\n\
+Setup failed to install Kitserver 3 for\n\
 %s.\n\
 \n\
 (No modifications made.)\n\
 Verify that the executable is not\n\
 READ-ONLY, and try again.", fileName);
 
-		MessageBox(hWnd, buf, "KitServer 2 Setup Message", 0);
+		MessageBox(hWnd, buf, "Kitserver 3 Setup Message", 0);
 	}
 }
 
@@ -253,10 +257,10 @@ void RemoveKserv(void)
 				ZeroMemory(buf, BUFLEN);
 				sprintf(buf, "\
 ======== INFORMATION! =========\n\
-KitServer 2 is not installed for\n\
+Kitserver 3 is not installed for\n\
 %s.", fileName);
 
-				MessageBox(hWnd, buf, "KitServer 2 Setup Message", 0);
+				MessageBox(hWnd, buf, "Kitserver 3 Setup Message", 0);
 				return;
 			}
 			// zero out the bytes
@@ -301,10 +305,10 @@ KitServer 2 is not installed for\n\
 		ZeroMemory(buf, BUFLEN);
 		sprintf(buf, "\
 ======== SUCCESS! =========\n\
-Setup has removed KitServer 2 from\n\
+Setup has removed Kitserver 3 from\n\
 %s.", fileName);
 
-		MessageBox(hWnd, buf, "KitServer 2 Setup Message", 0);
+		MessageBox(hWnd, buf, "Kitserver 3 Setup Message", 0);
 	}
 	else
 	{
@@ -318,14 +322,14 @@ Setup has removed KitServer 2 from\n\
 		ZeroMemory(buf, BUFLEN);
 		sprintf(buf, "\
 ======== ERROR! =========\n\
-Setup failed to remove KitServer 2 from\n\
+Setup failed to remove Kitserver 3 from\n\
 %s.\n\
 \n\
 (No modifications made.)\n\
 Verify that the executable is not\n\
 READ-ONLY, and try again.", fileName);
 
-		MessageBox(hWnd, buf, "KitServer 2 Setup Message", 0);
+		MessageBox(hWnd, buf, "Kitserver 3 Setup Message", 0);
 	}
 }
 

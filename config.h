@@ -15,6 +15,10 @@
 #define DEFAULT_VKEY_GKAWAYKIT 0x34
 #define DEFAULT_VKEY_BALL 0x42
 #define DEFAULT_VKEY_RANDOM_BALL 0x43
+#define DEFAULT_ASPECT_RATIO 0.0f
+#define DEFAULT_GAME_SPEED 0.0f
+#define DEFAULT_SCREEN_WIDTH 0
+#define DEFAULT_SCREEN_HEIGHT 0
 
 typedef struct _KSERV_CONFIG_STRUCT {
 	DWORD  debug;
@@ -25,6 +29,10 @@ typedef struct _KSERV_CONFIG_STRUCT {
 	WORD   vKeyGKAwayKit;
 	WORD   vKeyBall;
 	WORD   vKeyRandomBall;
+    float  aspectRatio;
+    float  gameSpeed;
+    DWORD  screenWidth;
+    DWORD  screenHeight;
 
 } KSERV_CONFIG;
 
