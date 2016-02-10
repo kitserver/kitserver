@@ -1,0 +1,94 @@
+Notes for KitServer program
+===========================
+
+2 important routines:
+
+5094c0:
+EDX contains the address of the buffer to be "processed".
+This buffer basically contains the uniXXXyy.bin file. Swap the buffer
+addresses and you can swap to put a different uniform there.
+
+Looks like it modifies 13 4-byte words at the offset 0x20 of the buffer.
+Hard to say what kind of processing it is. Not yet at least.
+
+842e10:
+Decodes the uniXXXyy.bin file into raw graphics data.
+takes parameters (in reverse order):
+- decrypted size - 8 bytes
+- encrypted size - 8 bytes
+- address of the buffer with encoded data.
+return value:
+- address of the buffer with decoded data
+
+Swap the address parameter and you can make them wear a different uniform.
+
+This seems to be a universal routine for decoding bins
+Ball model and Ball tex are decoded by it as well.
+
+502c05: calls 842ec0 and next 2 calls to 842e10 are calls to
+load ball model and ball texture respectively. By hooking on both
+
+502c05:CALL 842eC0 method call, and
+842f07:CALL 842e10 method call
+
+We can easily switch to a different ball.
+
+Goalkeeper kits are loaded using this algorithm:
+In Match Mode:
+GK kit is loaded for HOME team (1st or 2nd choice - depends on opponent)
+GK kit is loaded for AWAY team (1st or 2nd choice - depends on opponent)
+
+In other modes:
+1st choice GK kit is loaded for HOME team
+1st choice GK kit is loaded for AWAY team
+After that, one of 4 scenarios is possible:
+1  no more GK kits are loaded
+2. 2nd choice GK kit is loaded for HOME team
+3. 2nd choice GK kit is loaded for AWAY team
+4. 2nd choice GK kit is loaded for HOME team
+   and then 2nd choice GK kit is loaded for AWAY team
+
+Basically, in non-exhib mode, somehow we need to know for which
+team the kit is being loaded for.
+
+******
+Notes about decoded uniform buffer:
+
+Size: 0x28480 (169442) bytes.
+Consists of 4 parts: 
+offset   meaning                 length
+----------------------------------------------
+00000000 header                  0x80 bytes
+00000080 palette                 0x400 bytes      
+00000480 large texture (512x256) 0x20000 bytes
+00020480 small texture (256x128) 0x8000 bytes
+----------------------------------------------
+
+header structure:
+offset   meaning                 length
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+00000014 texture width           2 bytes
+00000016 texture height          2 bytes
+00000017 bits per pixel          1 byte
+
+palette structure: 256 4-byte RGBA values.
+Interestingly enough, the order of color indicies is not 0 - 255. 
+Instead, it is a sequence of 32-color banks, each one consisting
+of 4 8-color collections, with 2nd and 3rd collections swapped: 
+Like this: 0-7,16-23,8-15,24-31 
+So, for the full palette we have:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+0-7,16-23,8-15,24-31
+32-39,48-55,40-47,56-63
+64-71,80-87,72-79,88-95
+...
+224-231,240-247,232-239,248-255
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+texture: 8-bit color indexed bitmap. (each byte - an index into palette)
+
+
+MORE GENERIC TEXTURE CONTAINER:
+texture: X-bit color indexed bitmap. Typical values for X: 8, 4.
+(4 - corresponds to 16-color bitmaps, used for jersey numbers.)
+

@@ -1,0 +1,46 @@
+505e88: man utd number type
+505e9c: newcastle number type
+
+505e94: man utd collars: 1st-pl, 2nd-pl, 1st-gk, 2nd-gk.
+(0 - have collar, 2 - no collar)
+505ea8: newcastle collars: 1st-pl, 2nd-pl, 1st-gk, 2nd-gk. 
+
+508c98: man utd colors
+508d00: newc utd colors
+
+Collars formula:
+0x5058a4 + N*20  (where N is team number)
+
+Colors formula:
+0x506db8 + N*104 (where N is team number)
+
+One exception to formulas:
+When Master League Team is picked to play against Club or National team,
+then N becomes B3(home) or B4(away) for master league, and therefore
+the formula cannot be applied. 
+It works fine in the Master League Mode however, which is much more
+important.
+
+NOTE: 
+At runtime, all addresses are + 400000 (pes3.exe module load address).
+So for example, 506db8 becomes 906db8.
+
+STATE:
+- hot keys are now only available during Strip Selection screen.
+- quick jamming of hot keys is safe now.
+- ML vs Club/National is properly handled. (Disabled for ML team)
+- bug-fix: when user cancels after strip selection but before match
+starts. Now colors and collars are correct.
+
+TODO:
+- more intuitive uniform cycling [100% done]
+- implement full database support (as opposed to hardcoded) [100% done]
+*****
+- UI work / Config work
+- strip out extraneous code (taksi parts)
+- change hard-coded PES addresses to relative ones (from .text, .data, etc.)
+
+
+Known issues:
+bad (corrupt, improper formated) uniform files will crash the game, when
+attempt is made to load them.

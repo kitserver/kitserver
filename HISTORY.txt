@@ -1,0 +1,62 @@
+KitServer CHANGE LOG                                         August 20, 2004
+============================================================================
+
+Version 2.0.5
+-------------
+- new feature: random ball selection.
+
+Version 2.0.4
+-------------
+- A major bug fixed, when goalkeeping kits were not loading properly:
+(loading into wrong team, not loading at all, etc.) Also the number/name 
+colors for GK kits are now correctly set.
+- That PES3 1.10.2 bug is fixed again. For sure. :-)
+
+
+Version 2.0.3
+-------------
+- added a couple extra sample kits to KDB (for Dinamo Kiev)
+- Unfortunately, the PES 1.10.2 bug that was fixed in v2.0.1 
+was accidently introduced back in this release.
+
+
+Version 2.0.1
+-------------
+This is bug-fixing (a.k.a. "maintanence") release.
+The following bugs are fixed:
+
+- In MATCH MODE, "P1 quick start" and "P2 quick start" modes were not handled
+correctly. This resulted in weird effect of kits from different teams being
+selected for players and goalkeepers, if more then one match was played in
+either of these two modes.
+
+- For PES3 1.10.2, players kits were always loaded into "1st strip", instead
+of being loaded into currently selected strip. (This bug does not appear
+if PES3 1.0, 1.30.1 and WE7I executable is used.)
+
+
+Version 2.0
+-----------
+This is almost a complete re-write of the KitServer. It now has a different
+architecture, where you have to install it as a plug-in for the game, unlike 
+in earlier (1.x) versions when you had to keep the kserv.exe running together
+with the game so that it could hook on it.
+
+The new architecture has several advantages:
+
+1. Requires less resources, because no windows hooking is needed.
+2. The game itself loads KitServer on startup, and unloads on exit, so no 
+need for manual start of kserv.exe (in fact, there is no kserv.exe anymore)
+3. Compatibility mode problems, which i believe were caused by the need
+to do run-time hooking, should be resolved now.
+
+The following features are also new in this release:
+
+- Ball selection (You can select from any number of balls from KDB)
+- Goalkeeper kit selection (KDB now contains goalkeeper kits as well)
+- Text labels for all selectable items for easy identification. (For
+example, some teams use the "European" kits, which look identical from the
+front, but are different at the back. Text label identifies exactly which
+kit file is currently in use.)
+
+

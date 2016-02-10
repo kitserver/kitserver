@@ -1,0 +1,183 @@
+Dump of file KCTRL.EXE
+
+File Header
+  Machine:                      014C (i386)
+  Number of Sections:           0004
+  TimeDateStamp:                40D6962C -> Mon Jun 21 01:02:52 2004
+  PointerToSymbolTable:         00000000
+  NumberOfSymbols:              00000000
+  SizeOfOptionalHeader:         00E0
+  Characteristics:              010F
+    RELOCS_STRIPPED
+    EXECUTABLE_IMAGE
+    LINE_NUMS_STRIPPED
+    LOCAL_SYMS_STRIPPED
+    32BIT_MACHINE
+
+Optional Header
+  Magic                         010B
+  linker version                6.00
+  size of code                  9000
+  size of initialized data      7000
+  size of uninitialized data    0
+  entrypoint RVA                3A1B
+  base of code                  1000
+  base of data                  A000
+  image base                    400000
+  section align                 1000
+  file align                    1000
+  required OS version           4.00
+  image version                 0.00
+  subsystem version             4.00
+  Win32 Version                 0
+  size of image                 11000
+  size of headers               1000
+  checksum                      0
+  Subsystem                     0002 (Windows GUI)
+  DLL flags                     0000
+  stack reserve size            100000
+  stack commit size             1000
+  heap reserve size             100000
+  heap commit size              1000
+  RVAs & sizes                  10
+
+Data Directory
+  EXPORT       rva: 00000000  size: 00000000
+  IMPORT       rva: 0000A568  size: 00000050
+  RESOURCE     rva: 00000000  size: 00000000
+  EXCEPTION    rva: 00000000  size: 00000000
+  SECURITY     rva: 00000000  size: 00000000
+  BASERELOC    rva: 00000000  size: 00000000
+  DEBUG        rva: 00000000  size: 00000000
+  COPYRIGHT    rva: 00000000  size: 00000000
+  GLOBALPTR    rva: 00000000  size: 00000000
+  TLS          rva: 00000000  size: 00000000
+  LOAD_CONFIG  rva: 00000000  size: 00000000
+  BOUND_IMPORT rva: 00000000  size: 00000000
+  IAT          rva: 0000A000  size: 00000114
+  DELAY_IMPORT rva: 00000000  size: 00000000
+  unused       rva: 00000000  size: 00000000
+  unused       rva: 00000000  size: 00000000
+
+Section Table
+  01 .text     VirtSize: 00008F96  VirtAddr:  00001000
+    raw data offs:   00001000  raw data size: 00009000
+    relocation offs: 00000000  relocations:   00000000
+    line # offs:     00000000  line #'s:      00000000
+    characteristics: 60000020
+      CODE  EXECUTE  READ  ALIGN_DEFAULT(16)
+
+  02 .rdata    VirtSize: 00000B42  VirtAddr:  0000A000
+    raw data offs:   0000A000  raw data size: 00001000
+    relocation offs: 00000000  relocations:   00000000
+    line # offs:     00000000  line #'s:      00000000
+    characteristics: 40000040
+      INITIALIZED_DATA  READ  ALIGN_DEFAULT(16)
+
+  03 .data     VirtSize: 000036B8  VirtAddr:  0000B000
+    raw data offs:   0000B000  raw data size: 00003000
+    relocation offs: 00000000  relocations:   00000000
+    line # offs:     00000000  line #'s:      00000000
+    characteristics: C0000040
+      INITIALIZED_DATA  READ  WRITE  ALIGN_DEFAULT(16)
+
+  04 .HKT      VirtSize: 00001010  VirtAddr:  0000F000
+    raw data offs:   0000E000  raw data size: 00002000
+    relocation offs: 00000000  relocations:   00000000
+    line # offs:     00000000  line #'s:      00000000
+    characteristics: D0000040
+      INITIALIZED_DATA  SHARED  READ  WRITE  ALIGN_DEFAULT(16)
+
+
+
+
+Imports Table:
+  USER32.dll
+  OrigFirstThunk:  0000A68C (Unbound IAT)
+  TimeDateStamp:   00000000 -> Wed Dec 31 16:00:00 1969
+  ForwarderChain:  00000000
+  First thunk RVA: 0000A0D4
+  Ordn  Name
+   272  GetKeyNameTextA
+   437  MapVirtualKeyA
+   532  SendMessageA
+   392  IsDialogMessageA
+   298  GetMessageA
+   478  PostMessageA
+    89  CreateWindowExA
+   642  TranslateMessage
+   149  DispatchMessageA
+   410  LoadCursorA
+   618  ShowWindow
+   414  LoadIconA
+   132  DefWindowProcA
+   499  RegisterClassExA
+   480  PostQuitMessage
+
+  GDI32.dll
+  OrigFirstThunk:  0000A5B8 (Unbound IAT)
+  TimeDateStamp:   00000000 -> Wed Dec 31 16:00:00 1969
+  ForwarderChain:  00000000
+  First thunk RVA: 0000A000
+  Ordn  Name
+   351  GetStockObject
+
+  KERNEL32.dll
+  OrigFirstThunk:  0000A5C0 (Unbound IAT)
+  TimeDateStamp:   00000000 -> Wed Dec 31 16:00:00 1969
+  ForwarderChain:  00000000
+  First thunk RVA: 0000A008
+  Ordn  Name
+   282  GetLastError
+   318  GetProcAddress
+   670  TerminateProcess
+   448  LCMapStringW
+   447  LCMapStringA
+   339  GetStringTypeA
+   609  SetEndOfFile
+   342  GetStringTypeW
+   305  GetOEMCP
+   185  GetACP
+   450  LoadLibraryA
+   618  SetFilePointer
+   484  MultiByteToWideChar
+   191  GetCPInfo
+   636  SetStdHandle
+   770  lstrcpyA
+   776  lstrlenA
+    87  DeleteFileA
+   764  lstrcmpA
+    27  CloseHandle
+   415  HeapFree
+   536  ReadFile
+   409  HeapAlloc
+   320  GetProcessHeap
+   274  GetFileSize
+    52  CreateFileA
+   735  WriteFile
+   294  GetModuleHandleA
+   336  GetStartupInfoA
+   202  GetCommandLineA
+   372  GetVersion
+   125  ExitProcess
+   264  GetEnvironmentStringsW
+   170  FlushFileBuffers
+   247  GetCurrentProcess
+   685  UnhandledExceptionFilter
+   292  GetModuleFileNameA
+   178  FreeEnvironmentStringsA
+   179  FreeEnvironmentStringsW
+   722  WideCharToMultiByte
+   262  GetEnvironmentStrings
+   411  HeapCreate
+   621  SetHandleCount
+   338  GetStdHandle
+   277  GetFileType
+   413  HeapDestroy
+   703  VirtualFree
+   559  RtlUnwind
+   699  VirtualAlloc
+   418  HeapReAlloc
+
+
+
