@@ -1,4 +1,4 @@
-Kitserver 3.0.0 README FILE                                February 10, 2016
+Kitserver 3.0.1 README FILE                                February 11, 2016
 ============================================================================
 
 
