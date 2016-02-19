@@ -1,5 +1,14 @@
-KitServer CHANGE LOG                                       February 11, 2016
+KitServer CHANGE LOG                                       February 19, 2016
 ============================================================================
+
+
+Versino 3.1.0
+-------------
+- new features to tweak camera settings:
+    * camera.zoom
+    * camera.angle.multiplier
+    * stadium.render.clip
+    * stadium.render.height
 
 
 Version 3.0.1

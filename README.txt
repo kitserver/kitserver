@@ -1,4 +1,4 @@
-Kitserver 3.0.1 README FILE                                February 11, 2016
+Kitserver 3.1.0 README FILE                                February 19, 2016
 ============================================================================
 
 
@@ -126,6 +126,76 @@ them. You still need to do the normal installation procedure for each
 game, but after that is done, you can move KDB folder to some other 
 place on your hard drive, and then make sure that all kitservers point
 to it. This way, you can maintain just one database for all games.
+
+
+KSERV.CFG OPTIONS
+-----------------
+
+Some additional features are available for configuration in kserv.cfg
+file, which is located in the same folder where kserv.dll is.
+Here is a short description of what each of those means:
+
+game.speed
+
+- defaults to 1.0
+- allows to alter the game speed. Values less than 1.0 will make the
+game slower, and values bigger than 1.0 will make the game faster.
+Even small changes can make a noticeable difference, so if you want
+to slow the game down just a little bit, use a value like 0.89, for example.
+
+aspect.ratio
+
+- sets the aspect ratio during the matches. Useful for widescreen modes,
+because it allows to set correct proportions of the ball and players.
+This is done by changing the horizontal viewing area of the camera.
+For widescreen modes, you would want to set it to 1.6 or 1.77778, 
+depending on exact resolution in use.
+
+screen.width
+screen.height
+
+- allows to set custom resolution, which isn't offered by the game.
+This can happen typically with newer monitors, especially widescreens.
+
+camera.zoom
+
+- defaults to 1800.0
+- sets the value of camera zoom. Values less than 1800.0 will make the
+field appear further away, values bigger than 1800.0 will bring the field
+closer to the viewer.
+
+camera.angle.multiplier
+
+- defaults to 1.0
+- allowed values are: 1,2,4,8,16,32
+- Some cameras in the game provide the "angle", which determines how far
+the camera can turn left and right. 0 (Default) means almost no turning at
+all, and 9 - the biggest angle. With this option, you can increase that
+angle. It works by basically multuplying the "angle" value in the game
+by the value of this option. So, setting the multiplier to 2 or larger
+values, will result in bigger turn angle for the camera.
+
+stadium.render.clip
+
+- defaults to 1
+- allowed values are: 0,1
+- Disables (0) or enables (1) the clipping of the stadium left and right
+parts during the gameplay. Clipping is done by the game engine to optimize
+the performance, but with modified camera zoom and angle, you can get 
+Setting this option to 0 allows to turn off the clipping, so that the 
+stadium left and right sides are always correctly rendered.
+
+stadium.render.height
+
+- defaults to 0.15
+- Controls the height of rendering of the stadium. By default, during the
+gameplay, the upper parts of the stadium are not rendered, because they
+are typically not visible. By increasing this value, you make the game
+engine render more of the stadium. A value of 1.0 or 2.0 should result in
+the entire stadium being rendered (with the roof or upper structures).
+Be aware though that near side will be rendered too, therefore 
+obstructing the camera, on cameras such as "Wide" and "Long". Choose
+the value carefully.
 
 
 UNINSTALL
