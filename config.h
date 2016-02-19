@@ -19,6 +19,10 @@
 #define DEFAULT_GAME_SPEED 0.0f
 #define DEFAULT_SCREEN_WIDTH 0
 #define DEFAULT_SCREEN_HEIGHT 0
+#define DEFAULT_CAMERA_ZOOM 1800.0f
+#define DEFAULT_CAMERA_ANGLE_MULTIPLIER 1
+#define DEFAULT_STADIUM_RENDER_CLIP 1
+#define DEFAULT_STADIUM_RENDER_HEIGHT 0.0f
 
 typedef struct _KSERV_CONFIG_STRUCT {
 	DWORD  debug;
@@ -33,6 +37,10 @@ typedef struct _KSERV_CONFIG_STRUCT {
     float  gameSpeed;
     DWORD  screenWidth;
     DWORD  screenHeight;
+    float  cameraZoom;
+    DWORD  cameraAngleMultiplier;
+    DWORD  stadiumRenderClip;
+    float  stadiumRenderHeight;
 
 } KSERV_CONFIG;
 

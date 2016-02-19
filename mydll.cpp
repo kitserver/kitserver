@@ -69,6 +69,12 @@ KSERV_CONFIG g_config = {
 	DEFAULT_VKEY_RANDOM_BALL,
     DEFAULT_ASPECT_RATIO,
     DEFAULT_GAME_SPEED,
+    DEFAULT_SCREEN_WIDTH,
+    DEFAULT_SCREEN_HEIGHT,
+    DEFAULT_CAMERA_ZOOM,
+    DEFAULT_CAMERA_ANGLE_MULTIPLIER,
+    DEFAULT_STADIUM_RENDER_CLIP,
+    DEFAULT_STADIUM_RENDER_HEIGHT,
 };
 #pragma data_seg()
 #pragma comment(linker, "/section:.HKT,rws")
@@ -1218,6 +1224,7 @@ BYTE near_qpf[8] =
 
 bool argsPatched(false);
 
+
 BYTE* find_code_frag(BYTE *base, DWORD max_offset, BYTE *frag, size_t frag_len)
 {
     BYTE *p = base;
@@ -1327,6 +1334,209 @@ void patchAspectRatioAndGameSpeed()
     }
 }
 
+BYTE czoom1[9] =
+    "\x68\x00\x80\x09\x46"
+    "\xf3\xa5"
+    "\xe8";
+
+int czoom1_off1 = 0x20;
+//int czoom1_off2 = 0x28;
+
+BYTE czoom2[11] = 
+    "\xc4\x04\x5f"
+    "\x5e"
+    "\x5b"
+    "\x8b\xe5"
+    "\x5d"
+    "\xc3"
+    "\x68";
+
+int czoom2_off = 0x0a;
+
+BYTE czoom3[12] =
+    "\xde\xf9"
+    "\xd9\x58\x08"
+    "\x5b"
+    "\x8b\xe5"
+    "\x5d"
+    "\xc3"
+    "\x68";
+
+int czoom3_off = 0x0b;
+
+BYTE camAngleMult[6] =
+    "\xc1\xe0\x04"
+    "\x66\xa3";
+
+int camAngleMult_off = 2;
+
+BYTE stadRenderHeight[17] =
+    "\x0a\xd7\x23\x3b"
+    "\x66\x66\x66\x3f"
+    "\x00\x00\xb4\x43"
+    "\x0a\xd7\xa3\x3b";
+
+int stadRenderHeight_off = 0x14;
+
+bool patchCameraZoom(BYTE *code_sec, size_t max_length)
+{
+    BYTE *c;
+    DWORD oldProtection;
+    DWORD newProtection = PAGE_EXECUTE_READWRITE;
+
+    /* search for czoom1 */
+    c = find_code_frag(code_sec, max_length, czoom1, sizeof(czoom1)-1);
+    if (!c) {
+        return false;
+    }
+    if (VirtualProtect(c, 1024, newProtection, &oldProtection)) {
+        float *v = (float*)(c + czoom1_off1);
+        *v = g_config.cameraZoom;
+        VirtualProtect(c, 1024, oldProtection, &newProtection);
+    }
+
+    /* search for czoom2 */
+    c = find_code_frag(code_sec, max_length, czoom2, sizeof(czoom2)-1);
+    if (!c) {
+        return false;
+    }
+    if (VirtualProtect(c, 64, newProtection, &oldProtection)) {
+        float *v = (float*)(c + czoom2_off);
+        *v = g_config.cameraZoom;
+        VirtualProtect(c, 64, oldProtection, &newProtection);
+    }
+
+    /* search for czoom3 */
+    c = find_code_frag(code_sec, max_length, czoom3, sizeof(czoom3)-1);
+    if (!c) {
+        return false;
+    }
+    if (VirtualProtect(c, 64, newProtection, &oldProtection)) {
+        float *v = (float*)(c + czoom3_off);
+        *v = g_config.cameraZoom;
+        VirtualProtect(c, 64, oldProtection, &newProtection);
+    }
+
+    return true;
+}
+
+bool patchCameraAngleMultiplier(BYTE *code_sec, size_t max_length)
+{
+    BYTE *c;
+    DWORD oldProtection;
+    DWORD newProtection = PAGE_EXECUTE_READWRITE;
+
+    /* search for pattern */
+    c = find_code_frag(code_sec, max_length, camAngleMult, sizeof(camAngleMult)-1);
+    if (!c) {
+        return false;
+    }
+    if (VirtualProtect(c, 16, newProtection, &oldProtection)) {
+        BYTE *v = (BYTE*)(c + camAngleMult_off);
+        switch (g_config.cameraAngleMultiplier) {
+            case 1: *v = 4; break;
+            case 2: *v = 5; break;
+            case 4: *v = 6; break;
+            case 8: *v = 7; break;
+            case 16: *v = 8; break;
+            case 32: *v = 9; break;
+        }
+        VirtualProtect(c, 16, oldProtection, &newProtection);
+    }
+
+    return true;
+}
+
+bool patchStadiumRenderHeight(BYTE *data_sec, size_t max_length)
+{
+    BYTE *c;
+    DWORD oldProtection;
+    DWORD newProtection = PAGE_READWRITE;
+
+    /* search for stadRenderHeight */
+    c = find_code_frag(
+        data_sec, max_length, stadRenderHeight, sizeof(stadRenderHeight)-1);
+    if (!c) {
+        return false;
+    }
+    if (VirtualProtect(c, 32, newProtection, &oldProtection)) {
+        float *v = (float*)(c + stadRenderHeight_off);
+        *v = g_config.stadiumRenderHeight;
+        VirtualProtect(c, 32, oldProtection, &newProtection);
+    }
+
+    return true;
+}
+
+BYTE stadRenderClip1[14] =
+    "\x69\xc9\xf0\x00\x00\x00"
+    "\xba\x00\x18\x00\x00"
+    "\x2b\xd1";
+
+int stadRenderClip1_off = 0x1d;
+
+BYTE stadRenderClip2[15] =
+    "\x69\xc9\xf0\x00\x00\x00"
+    "\x81\xe9\x00\x18\x00\x00"
+    "\x89\x4c";
+
+int stadRenderClip2_off = 0x1c;
+
+BYTE stadRenderClip3[10] =
+    "\xb9\x00\x1f\x00\x00"
+    "\x2b\xc8"
+    "\x89\x4c";
+
+int stadRenderClip3_off = 0x17;
+
+bool patchStadiumRenderClip(BYTE *code_sec, size_t max_length)
+{
+    BYTE *c;
+    DWORD oldProtection;
+    DWORD newProtection = PAGE_EXECUTE_READWRITE;
+
+    if (g_config.stadiumRenderClip == 1) {
+        return false;
+    }
+
+    /* search for pattern */
+    c = find_code_frag(code_sec, max_length, stadRenderClip1, 
+            sizeof(stadRenderClip1)-1);
+    if (!c) {
+        return false;
+    }
+    if (VirtualProtect(c, 64, newProtection, &oldProtection)) {
+        BYTE *v = (BYTE*)(c + stadRenderClip1_off);
+        *v = '\xeb';
+        VirtualProtect(c, 64, oldProtection, &newProtection);
+    }
+
+    /* search for pattern */
+    c = find_code_frag(c+1, max_length, stadRenderClip2, 
+            sizeof(stadRenderClip2)-1);
+    if (!c) {
+        return false;
+    }
+    if (VirtualProtect(c, 64, newProtection, &oldProtection)) {
+        BYTE *v = (BYTE*)(c + stadRenderClip2_off);
+        *v = '\xeb';
+        VirtualProtect(c, 64, oldProtection, &newProtection);
+    }
+
+    /* search for pattern */
+    c = find_code_frag(c+1, max_length, stadRenderClip3, 
+            sizeof(stadRenderClip3)-1);
+    if (!c) {
+        return false;
+    }
+    if (VirtualProtect(c, 64, newProtection, &oldProtection)) {
+        BYTE *v = (BYTE*)(c + stadRenderClip3_off);
+        *v = '\xeb';
+        VirtualProtect(c, 64, oldProtection, &newProtection);
+    }
+
+    return true;
+}
 
 /*******************/
 /* DLL Entry Point */
@@ -1418,6 +1628,25 @@ EXTERN_C BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReser
                 codeAddr += sechdr->VirtualAddress;
                 if (patchResolution(codeAddr, sechdr->Misc.VirtualSize)) {
                     Log("resolution patched.");
+                }
+                if (patchCameraZoom(codeAddr, sechdr->Misc.VirtualSize)) {
+                    Log("camera zoom patched.");
+                }
+                if (patchCameraAngleMultiplier(
+                        codeAddr, sechdr->Misc.VirtualSize)) {
+                    Log("camera angle multiplier set.");
+                }
+                if (patchStadiumRenderClip(
+                        codeAddr, sechdr->Misc.VirtualSize)) {
+                    Log("stadium render clip disabled.");
+                }
+
+                BYTE *dataAddr = (BYTE *)GetModuleHandle(NULL);
+                sechdr = GetSectionHeader(".rdata");
+                dataAddr += sechdr->VirtualAddress;
+                if (patchStadiumRenderHeight(
+                        dataAddr, sechdr->Misc.VirtualSize)) {
+                    Log("stadium render height patched.");
                 }
 
 				// hook code[C_LOADUNI];

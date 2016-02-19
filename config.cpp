@@ -136,6 +136,59 @@ BOOL ReadConfig(KSERV_CONFIG* config, char* cfgFile)
             LogWithNumber("ReadConfig: screenHeight = %u\n", dvalue);
             config->screenHeight = dvalue;
 		}
+
+        // camera
+		else if (lstrcmp(name, "camera.zoom")==0)
+		{
+            float fvalue;
+			if (sscanf(pValue, "%f", &fvalue)!=1) continue;
+            if (fvalue >= 10.0f && fvalue <= 10000.0f) {
+                LogWithNumber("ReadConfig: cameraZoom = %03f\n", fvalue);
+                config->cameraZoom = fvalue;
+            }
+		}
+		else if (lstrcmp(name, "stadium.render.height")==0)
+		{
+            float fvalue;
+			if (sscanf(pValue, "%f", &fvalue)!=1) continue;
+            if (fvalue >= 0.1f && fvalue <= 5.0f) {
+                LogWithNumber(
+                    "ReadConfig: stadiumRenderHeight = %03f\n", fvalue);
+                config->stadiumRenderHeight = fvalue;
+            }
+		}
+		else if (lstrcmp(name, "stadium.render.clip")==0)
+		{
+            DWORD dvalue;
+			if (sscanf(pValue, "%u", &dvalue)!=1) continue;
+            if (dvalue == 0 || dvalue == 1) {
+                LogWithNumber(
+                    "ReadConfig: stadiumRenderClip = %u\n", dvalue);
+                config->stadiumRenderClip = dvalue;
+            }
+		}
+		else if (lstrcmp(name, "camera.angle.multiplier")==0)
+		{
+            DWORD dvalue;
+			if (sscanf(pValue, "%u", &dvalue)!=1) continue;
+            switch (dvalue) {
+                case 1:
+                case 2:
+                case 4:
+                case 8:
+                case 16:
+                case 32:
+                    LogWithNumber(
+                        "ReadConfig: cameraAngleMultiplier = %u\n",
+                        dvalue);
+                    config->cameraAngleMultiplier = dvalue;
+                    break;
+                default:
+                    Log("ReadConfig: WARNING: camera.angle.multiplier"
+                        " can only have these values: 1,2,4,8,16,32");
+            }
+		}
+
 	}
 	fclose(cfg);
 
